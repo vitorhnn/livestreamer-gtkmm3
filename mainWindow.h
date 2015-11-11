@@ -1,14 +1,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <glibmm/ustring.h>
+#include <glibmm/refptr.h>
+
 #include <gtkmm/window.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/toolbutton.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/treemodelcolumn.h>
 #include <gtkmm/liststore.h>
-#include <glibmm/ustring.h>
-#include <glibmm/refptr.h>
 
 
 class mainWindow : public Gtk::Window {

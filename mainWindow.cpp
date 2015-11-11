@@ -1,14 +1,13 @@
+#include <vector>
+#include <glibmm/spawn.h>
+
 #include "mainWindow.h"
 #include "addStreamDialog.h"
-#include <gtkmm/messagedialog.h>
-#include <glibmm.h>
-#include <string>
-#include <sstream>
 
-using namespace Glib;
 
-mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &builder)
-    : Gtk::Window(base), builder(builder)
+mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &builder) :
+    Gtk::Window(base),
+    builder(builder)
 {
     builder->get_widget("addButton", addStreamButton);
     builder->get_widget("removeButton", removeStreamButton);
@@ -38,8 +37,7 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
         using namespace Gtk;
         using namespace Glib;
 
-        RefPtr<TreeSelection> treeSelection = streamList->get_selection();
-        TreeModel::iterator iter = treeSelection->get_selected();
+        TreeModel::iterator iter = streamList->get_selection()->get_selected();
 
         if(iter != nullptr) {
             listModel->erase(iter);
@@ -52,8 +50,7 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
         using namespace Glib;
         using namespace std;
 
-        RefPtr<TreeSelection> treeSelection = streamList->get_selection();
-        TreeModel::iterator iter = treeSelection->get_selected();
+        TreeModel::iterator iter = streamList->get_selection()->get_selected();
 
         if(iter != nullptr) {
             TreeModel::Row row = *iter;

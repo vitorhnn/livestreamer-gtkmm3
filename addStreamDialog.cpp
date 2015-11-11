@@ -1,11 +1,13 @@
+#include <gtkmm/stock.h>
+
 #include "addStreamDialog.h"
-#include <gtkmm.h>
+
+
 addStreamDialog::addStreamDialog(Gtk::Window &parent) :
     Gtk::Dialog("Add a stream", parent, false),
     acceptButton(add_button(Gtk::Stock::OK, Gtk::RESPONSE_OK)),
     cancelButton(add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL))
 {
-
     acceptButton->set_can_default();
     acceptButton->grab_default();
     set_border_width(10);

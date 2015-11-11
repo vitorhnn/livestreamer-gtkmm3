@@ -6,6 +6,7 @@
 #include <gtkmm/entry.h>
 #include <gtkmm/box.h>
 
+
 class addStreamDialog : public Gtk::Dialog {
 public:
     addStreamDialog(Gtk::Window& parent);
