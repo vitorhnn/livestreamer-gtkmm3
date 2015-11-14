@@ -1,9 +1,10 @@
 #include <vector>
+
 #include <glibmm/spawn.h>
 
 #include "mainWindow.h"
 #include "addStreamDialog.h"
-
+#include "livestreamerProcess.h"
 
 mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &builder) :
     Gtk::Window(base),
@@ -14,6 +15,7 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
     builder->get_widget("playButton", playStreamButton);
     builder->get_widget("quitButton", quitButton);
     builder->get_widget("streamList", streamList);
+    builder->get_widget("statusbar", statusbar);
 
 
     listModel = Gtk::ListStore::create(columns);
@@ -58,7 +60,18 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
             argv.push_back("livestreamer");
             argv.push_back(row[columns.streamUrl]);
             argv.push_back(row[columns.streamQuality]);
-            spawn_async("", argv, SPAWN_SEARCH_PATH); // todo: use pipes to read the output
+
+            // using raw pointers because livestreamerProcess will kill itself when needed
+            livestreamerProcess* proc = new livestreamerProcess(argv);
+
+
+            proc->addOutputWatch([this, proc](IOCondition condition) -> bool {
+                Glib::ustring str;
+                proc->output->read_line(str);
+                statusbar->push(str);
+
+                return true;
+            });
         }
     };
     playStreamButton->signal_clicked().connect(playHandler);
