@@ -1,6 +1,5 @@
 #include <vector>
-
-#include <glibmm/spawn.h>
+#include <algorithm>
 
 #include "mainWindow.h"
 #include "addStreamDialog.h"
@@ -66,9 +65,19 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
 
 
             proc->addOutputWatch([this, proc](IOCondition condition) -> bool {
-                Glib::ustring str;
+                Glib::ustring str, output;
                 proc->output->read_line(str);
-                statusbar->push(str);
+                // remove livestreamer's newline.
+                //str.erase(std::remove(str.begin(), str.end(), '\n'), str.end()); -- doesn't work, "lvalue required as left operand of assignment in stl_algo.h"
+
+                for(size_t i=0; i< str.size(); i++)
+                {
+                    if(str[i] != '\n') {
+                        output += str[i];
+                    }
+                }
+
+                statusbar->push(output);
 
                 return true;
             });
