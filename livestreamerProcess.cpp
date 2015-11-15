@@ -23,10 +23,13 @@ livestreamerProcess::livestreamerProcess(std::vector<Glib::ustring> &argv)
 
 livestreamerProcess::~livestreamerProcess()
 {
+    for(auto connection : connections) {
+        connection.disconnect();
+    }
     Glib::spawn_close_pid(pid);
 }
 
 void livestreamerProcess::addOutputWatch(const sigc::slot< bool, Glib::IOCondition >& slot)
 {
-    Glib::signal_io().connect(slot, stdout, Glib::IO_IN);
+    connections.push_back(Glib::signal_io().connect(slot, stdout, Glib::IO_IN));
 }

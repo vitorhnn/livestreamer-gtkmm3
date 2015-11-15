@@ -27,6 +27,7 @@ private:
     int                               stdin;
     int                               stdout;
     int                               stderr;
+    std::vector<sigc::connection>     connections;
 };
 
 #endif // LIVESTREAMER_PROCESS_H
