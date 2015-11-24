@@ -10,7 +10,7 @@
 #include <gtkmm/treeview.h>
 #include <gtkmm/treemodelcolumn.h>
 #include <gtkmm/liststore.h>
-
+#include <gtkmm/statusbar.h>
 
 class mainWindow : public Gtk::Window {
 public:
@@ -29,12 +29,16 @@ private:
     };
 
     Glib::RefPtr<Gtk::Builder>  builder;
+
+    // TOOLBAR ITEMS
     Gtk::ToolButton*            addStreamButton;
     Gtk::ToolButton*            playStreamButton;
     Gtk::ToolButton*            removeStreamButton;
     Gtk::ToolButton*            quitButton;
 
     Gtk::TreeView*              streamList;
+
+    Gtk::Statusbar*             statusbar;
 
 
     ModelColumns columns;
