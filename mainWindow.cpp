@@ -1,5 +1,4 @@
 #include <vector>
-#include <algorithm>
 
 #include "mainWindow.h"
 #include "addStreamDialog.h"
@@ -22,7 +21,6 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
 
     streamList->append_column("URL", columns.streamUrl);
     streamList->append_column("Quality", columns.streamQuality);
-
 
     auto addHandler = [this](){
         addStreamDialog dlg(*this);
@@ -55,13 +53,9 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
 
         if(iter != nullptr) {
             TreeModel::Row row = *iter;
-            vector<ustring> argv;
-            argv.push_back("livestreamer");
-            argv.push_back(row[columns.streamUrl]);
-            argv.push_back(row[columns.streamQuality]);
 
             // using raw pointers because livestreamerProcess will kill itself when needed
-            livestreamerProcess* proc = new livestreamerProcess(argv);
+            livestreamerProcess* proc = new livestreamerProcess(row[columns.streamUrl], row[columns.streamQuality]);
 
 
             proc->addOutputWatch([this, proc](IOCondition condition) -> bool {

@@ -1,8 +1,15 @@
 #include "livestreamerProcess.h"
-#include <iostream>
-livestreamerProcess::livestreamerProcess(std::vector<Glib::ustring> &argv)
+
+#include <vector>
+
+livestreamerProcess::livestreamerProcess(const Glib::ustring& streamUrl, const Glib::ustring& streamQuality)
 {
     using namespace Glib;
+
+    std::vector<ustring> argv;
+    argv.push_back("livestreamer");
+    argv.push_back(streamUrl);
+    argv.push_back(streamQuality);
 
     spawn_async_with_pipes("",
                            argv,

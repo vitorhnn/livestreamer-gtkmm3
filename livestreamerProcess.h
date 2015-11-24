@@ -8,12 +8,12 @@
 #include <glibmm/iochannel.h>
 #include <glibmm/ustring.h>
 
-#include <sigc++/slot.h>
+#include <sigc++/connection.h>
 
 class livestreamerProcess
 {
 public:
-    livestreamerProcess(std::vector<Glib::ustring>& argv);
+    livestreamerProcess(const Glib::ustring &streamUrl, const Glib::ustring &streamQuality);
     ~livestreamerProcess();
 
     // no copy
