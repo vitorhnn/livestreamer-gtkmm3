@@ -17,6 +17,9 @@ public:
     mainWindow(BaseObjectType* type, const Glib::RefPtr<Gtk::Builder>& builder);
 private:
 
+    void readDataFile();
+    void writeDataFile();
+
     class ModelColumns : public Gtk::TreeModelColumnRecord {
     public:
         ModelColumns()
