@@ -6,6 +6,7 @@
 #include "mainWindow.h"
 #include "addStreamDialog.h"
 #include "livestreamerProcess.h"
+#include "fileHelper.h"
 
 mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &builder) :
     Gtk::Window(base),
@@ -89,6 +90,27 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
         close();
     };
     quitButton->signal_clicked().connect(quitHandler);
+
+    auto activatedHandler = [this] (auto path, auto unused) {
+        using namespace Gtk;
+
+        TreeModel::iterator iter = listModel->get_iter(path);
+
+        if(iter != nullptr) {
+            TreeModel::Row row = *iter;
+
+            addStreamDialog dlg(*this, row[columns.streamUrl], row[columns.streamQuality]);
+
+            if(dlg.run() == Gtk::RESPONSE_OK) {
+                row[columns.streamUrl] = dlg.UrlEntry.get_text();
+                row[columns.streamQuality] = dlg.qualityEntry.get_text();
+
+                this->writeDataFile(); // not quite sure why I need this this->
+            }
+        }
+    };
+
+   streamList->signal_row_activated().connect(activatedHandler);
 }
 
 void mainWindow::readDataFile()
@@ -96,7 +118,7 @@ void mainWindow::readDataFile()
     using namespace Glib;
     using namespace std;
 
-    ifstream stream("streams.list");
+    ifstream stream(fileHelper::getConfigFilePath("streams.list"));
 
     for (string line; getline(stream, line);) { // I'd use a ustring here if getline was compatible with it
         if(!line.empty()) {
@@ -120,7 +142,7 @@ void mainWindow::writeDataFile()
 {
     using namespace std;
 
-    ofstream stream("streams.list", ofstream::out | ofstream::trunc);
+    ofstream stream(fileHelper::getConfigFilePath("streams.list") , ofstream::out | ofstream::trunc);
 
     for (auto row : listModel->children()) {
         stream << row[columns.streamUrl] << ";" << row[columns.streamQuality] << endl;

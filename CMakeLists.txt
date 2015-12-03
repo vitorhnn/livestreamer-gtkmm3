@@ -12,6 +12,6 @@ PKG_CHECK_MODULES(GTKMM3 gtkmm-3.0 REQUIRED)
 include_directories( ${GTKMM3_INCLUDE_DIRS} )
 
 
-add_executable( livegui ../main.cpp ../mainWindow.cpp ../addStreamDialog.cpp ../livestreamerProcess.cpp)
+add_executable( livegui fileHelper.cpp main.cpp mainWindow.cpp addStreamDialog.cpp livestreamerProcess.cpp)
 target_link_libraries( livegui  ${GTKMM3_LIBRARIES} )
 

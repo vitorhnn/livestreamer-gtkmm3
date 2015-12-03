@@ -3,7 +3,7 @@
 #include "addStreamDialog.h"
 
 
-addStreamDialog::addStreamDialog(Gtk::Window &parent) :
+addStreamDialog::addStreamDialog(Gtk::Window &parent, Glib::ustring url, Glib::ustring quality) :
     Gtk::Dialog("Add a stream", parent, false),
     acceptButton(add_button(Gtk::Stock::OK, Gtk::RESPONSE_OK)),
     cancelButton(add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL))
@@ -15,8 +15,8 @@ addStreamDialog::addStreamDialog(Gtk::Window &parent) :
     UrlEntry.set_placeholder_text("http://twitch.tv/bobross");
     qualityEntry.set_placeholder_text("best");
 
-    UrlEntry.set_text("http://twitch.tv/bobross");
-    qualityEntry.set_text("best");
+    UrlEntry.set_text(url);
+    qualityEntry.set_text(quality);
 
     UrlEntry.set_activates_default();
     qualityEntry.set_activates_default();
