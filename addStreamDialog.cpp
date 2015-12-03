@@ -3,8 +3,8 @@
 #include "addStreamDialog.h"
 
 
-addStreamDialog::addStreamDialog(Gtk::Window &parent, Glib::ustring url, Glib::ustring quality) :
-    Gtk::Dialog("Add a stream", parent, false),
+addStreamDialog::addStreamDialog(Gtk::Window &parent, const Glib::ustring &url, const Glib::ustring &quality) :
+    Gtk::Dialog("Add a stream", parent, true),
     acceptButton(add_button(Gtk::Stock::OK, Gtk::RESPONSE_OK)),
     cancelButton(add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL))
 {
