@@ -30,7 +30,7 @@ livestreamerProcess::livestreamerProcess(const Glib::ustring& streamUrl, const G
 
 livestreamerProcess::~livestreamerProcess()
 {
-    for(auto connection : connections) {
+    for(auto &connection : connections) {
         connection.disconnect();
     }
     Glib::spawn_close_pid(pid);

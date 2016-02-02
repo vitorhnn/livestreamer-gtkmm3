@@ -17,6 +17,8 @@ std::string duckTapegetenv(const std::string &variable)
     // which crashes the whole thing, since you can't build std::strings from 0x0.
     // so we wrap around the overload that actually works.
 
+    // 2015/12/13: Glib::getenv(const std::string&) seems to be working with glibmm 2.46.3 now.
+
     bool found; // hey look I'm useless!
     return Glib::getenv(variable, found);
 }
@@ -28,6 +30,7 @@ void checkForOurDirectories()
     using namespace Gio;
 
     Gio::init();
+
 
     // check for XDG_CONFIG_HOME
     string env = duckTapegetenv("XDG_CONFIG_HOME");

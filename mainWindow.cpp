@@ -124,7 +124,7 @@ void mainWindow::readDataFile()
         if(!line.empty()) {
             auto separator = line.find_first_of(";");
 
-            if(separator == ustring::npos) {
+            if(separator == string::npos) {
                 continue;
             }
 
@@ -144,7 +144,7 @@ void mainWindow::writeDataFile()
 
     ofstream stream(fileHelper::getConfigFilePath("streams.list") , ofstream::out | ofstream::trunc);
 
-    for (auto row : listModel->children()) {
+    for (const auto &row : listModel->children()) {
         stream << row[columns.streamUrl] << ";" << row[columns.streamQuality] << endl;
     }
 }
