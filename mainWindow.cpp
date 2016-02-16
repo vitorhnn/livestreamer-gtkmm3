@@ -91,7 +91,7 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
     };
     quitButton->signal_clicked().connect(quitHandler);
 
-    auto activatedHandler = [this] (auto path, auto unused) {
+    auto activatedHandler = [this] (const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* unused) {
         using namespace Gtk;
 
         TreeModel::iterator iter = listModel->get_iter(path);
@@ -105,7 +105,7 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
                 row[columns.streamUrl] = dlg.UrlEntry.get_text();
                 row[columns.streamQuality] = dlg.qualityEntry.get_text();
 
-                this->writeDataFile(); // not quite sure why I need this this->
+                writeDataFile();
             }
         }
     };
