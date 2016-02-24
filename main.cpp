@@ -26,12 +26,14 @@ int main(int argc, char* argv[])
 
         delete window;
 #ifdef NDEBUG
-    } catch(const std::exception& ex) {
+    }
+    catch (const std::exception& ex) {
         MessageDialog dlg("Uncaught exception", false, MESSAGE_ERROR);
         dlg.set_secondary_text(ex.what());
         dlg.run();
         return 1;
-    } catch(const Glib::Exception& ex) { // For whatever reason, Glib::Exception does not inherit from std::exception
+    }
+    catch (const Glib::Exception& ex) { // For whatever reason, Glib::Exception does not inherit from std::exception
         MessageDialog dlg("Uncaught exception", false, MESSAGE_ERROR);
         dlg.set_secondary_text(ex.what());
         dlg.run();

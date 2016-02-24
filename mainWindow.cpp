@@ -28,9 +28,9 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
 
     readDataFile();
 
-    auto addHandler = [this](){
+    auto addHandler = [this]() {
         addStreamDialog dlg(*this);
-        if(dlg.run() == Gtk::RESPONSE_OK) {
+        if (dlg.run() == Gtk::RESPONSE_OK) {
             Gtk::TreeModel::Row row = *(listModel->append());
             row[columns.streamUrl] = dlg.UrlEntry.get_text();
             row[columns.streamQuality] = dlg.qualityEntry.get_text();
@@ -40,40 +40,40 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
     };
     addStreamButton->signal_clicked().connect(addHandler);
 
-    auto removeHandler = [this](){
+    auto removeHandler = [this]() {
         using namespace Gtk;
         using namespace Glib;
 
         TreeModel::iterator iter = streamList->get_selection()->get_selected();
 
-        if(iter != nullptr) {
+        if (iter != nullptr) {
             listModel->erase(iter);
             writeDataFile();
         }
     };
     removeStreamButton->signal_clicked().connect(removeHandler);
 
-    auto playHandler = [this](){
+    auto playHandler = [this]() {
         using namespace Gtk;
         using namespace Glib;
 
         TreeModel::iterator iter = streamList->get_selection()->get_selected();
 
-        if(iter != nullptr) {
+        if (iter != nullptr) {
             TreeModel::Row row = *iter;
 
             // using raw pointers because livestreamerProcess will kill itself when needed
             livestreamerProcess* proc = new livestreamerProcess(row[columns.streamUrl], row[columns.streamQuality]);
 
 
-            proc->addOutputWatch([this, proc](IOCondition condition) -> bool {
+            proc->addOutputWatch([this, proc] (IOCondition condition) -> bool {
                 Glib::ustring str, output;
                 proc->output->read_line(str);
                 // remove livestreamer's newline.
                 //str.erase(std::remove(str.begin(), str.end(), '\n'), str.end()); -- doesn't work, "lvalue required as left operand of assignment in stl_algo.h"
 
                 for (size_t i=0; i < str.size(); i++) {
-                    if(str[i] != '\n') {
+                    if (str[i] != '\n') {
                         output += str[i];
                     }
                 }
@@ -86,7 +86,7 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
     };
     playStreamButton->signal_clicked().connect(playHandler);
 
-    auto quitHandler = [this](){
+    auto quitHandler = [this]() {
         close();
     };
     quitButton->signal_clicked().connect(quitHandler);
@@ -96,12 +96,12 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
 
         TreeModel::iterator iter = listModel->get_iter(path);
 
-        if(iter != nullptr) {
+        if (iter != nullptr) {
             TreeModel::Row row = *iter;
 
             addStreamDialog dlg(*this, row[columns.streamUrl], row[columns.streamQuality]);
 
-            if(dlg.run() == Gtk::RESPONSE_OK) {
+            if (dlg.run() == Gtk::RESPONSE_OK) {
                 row[columns.streamUrl] = dlg.UrlEntry.get_text();
                 row[columns.streamQuality] = dlg.qualityEntry.get_text();
 
@@ -121,10 +121,10 @@ void mainWindow::readDataFile()
     ifstream stream(fileHelper::getConfigFilePath("streams.list"));
 
     for (string line; getline(stream, line);) { // I'd use a ustring here if getline was compatible with it
-        if(!line.empty()) {
+        if (!line.empty()) {
             auto separator = line.find_first_of(";");
 
-            if(separator == string::npos) {
+            if (separator == string::npos) {
                 continue;
             }
 

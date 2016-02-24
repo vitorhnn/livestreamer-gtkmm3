@@ -23,14 +23,14 @@ livestreamerProcess::livestreamerProcess(const Glib::ustring& streamUrl, const G
 
     output = IOChannel::create_from_fd(stdout);
 
-    signal_child_watch().connect([this] (auto pid, auto status){
+    signal_child_watch().connect([this] (auto pid, auto status) {
         delete this;
     }, pid);
 }
 
 livestreamerProcess::~livestreamerProcess()
 {
-    for(auto &connection : connections) {
+    for (auto &connection : connections) {
         connection.disconnect();
     }
     Glib::spawn_close_pid(pid);
