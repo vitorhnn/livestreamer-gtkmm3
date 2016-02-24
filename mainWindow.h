@@ -17,6 +17,7 @@ public:
     mainWindow(BaseObjectType* type, const Glib::RefPtr<Gtk::Builder>& builder);
 private:
 
+    void playStream(const Glib::ustring &url, const Glib::ustring &quality);
     void readDataFile();
     void writeDataFile();
 
@@ -24,9 +25,11 @@ private:
     public:
         ModelColumns()
         {
+            add(streamName);
             add(streamUrl);
             add(streamQuality);
         }
+        Gtk::TreeModelColumn<Glib::ustring> streamName;
         Gtk::TreeModelColumn<Glib::ustring> streamUrl;
         Gtk::TreeModelColumn<Glib::ustring> streamQuality;
     };
@@ -35,6 +38,7 @@ private:
 
     // TOOLBAR ITEMS
     Gtk::ToolButton*            addStreamButton;
+    Gtk::ToolButton*            editStreamButton;
     Gtk::ToolButton*            playStreamButton;
     Gtk::ToolButton*            removeStreamButton;
     Gtk::ToolButton*            quitButton;

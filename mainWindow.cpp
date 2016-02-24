@@ -13,6 +13,7 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
     builder(builder)
 {
     builder->get_widget("addButton", addStreamButton);
+    builder->get_widget("editButton", editStreamButton);
     builder->get_widget("removeButton", removeStreamButton);
     builder->get_widget("playButton", playStreamButton);
     builder->get_widget("quitButton", quitButton);
@@ -23,6 +24,7 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
     listModel = Gtk::ListStore::create(columns);
     streamList->set_model(listModel);
 
+    streamList->append_column("Name", columns.streamName);
     streamList->append_column("URL", columns.streamUrl);
     streamList->append_column("Quality", columns.streamQuality);
 
@@ -32,6 +34,7 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
         addStreamDialog dlg(*this);
         if (dlg.run() == Gtk::RESPONSE_OK) {
             Gtk::TreeModel::Row row = *(listModel->append());
+            row[columns.streamName] = dlg.nameEntry.get_text();
             row[columns.streamUrl] = dlg.UrlEntry.get_text();
             row[columns.streamQuality] = dlg.qualityEntry.get_text();
 
@@ -62,26 +65,7 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
         if (iter != nullptr) {
             TreeModel::Row row = *iter;
 
-            // using raw pointers because livestreamerProcess will kill itself when needed
-            livestreamerProcess* proc = new livestreamerProcess(row[columns.streamUrl], row[columns.streamQuality]);
-
-
-            proc->addOutputWatch([this, proc] (IOCondition condition) -> bool {
-                Glib::ustring str, output;
-                proc->output->read_line(str);
-                // remove livestreamer's newline.
-                //str.erase(std::remove(str.begin(), str.end(), '\n'), str.end()); -- doesn't work, "lvalue required as left operand of assignment in stl_algo.h"
-
-                for (size_t i=0; i < str.size(); i++) {
-                    if (str[i] != '\n') {
-                        output += str[i];
-                    }
-                }
-
-                statusbar->push(output);
-
-                return true;
-            });
+            playStream(row[columns.streamUrl], row[columns.streamQuality]);
         }
     };
     playStreamButton->signal_clicked().connect(playHandler);
@@ -91,6 +75,27 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
     };
     quitButton->signal_clicked().connect(quitHandler);
 
+    auto editHandler = [this] () {
+        using namespace Gtk;
+
+        TreeModel::iterator iter = streamList->get_selection()->get_selected();
+
+        if (iter != nullptr) {
+            TreeModel::Row row = *iter;
+
+            addStreamDialog dlg(*this, row[columns.streamName], row[columns.streamUrl], row[columns.streamQuality]);
+
+            if (dlg.run() == Gtk::RESPONSE_OK) {
+                row[columns.streamName] = dlg.nameEntry.get_text();
+                row[columns.streamUrl] = dlg.UrlEntry.get_text();
+                row[columns.streamQuality] = dlg.qualityEntry.get_text();
+
+                writeDataFile();
+            }
+        }
+    };
+    editStreamButton->signal_clicked().connect(editHandler);
+
     auto activatedHandler = [this] (const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* unused) {
         using namespace Gtk;
 
@@ -99,18 +104,10 @@ mainWindow::mainWindow(BaseObjectType *base, const Glib::RefPtr<Gtk::Builder> &b
         if (iter != nullptr) {
             TreeModel::Row row = *iter;
 
-            addStreamDialog dlg(*this, row[columns.streamUrl], row[columns.streamQuality]);
-
-            if (dlg.run() == Gtk::RESPONSE_OK) {
-                row[columns.streamUrl] = dlg.UrlEntry.get_text();
-                row[columns.streamQuality] = dlg.qualityEntry.get_text();
-
-                writeDataFile();
-            }
+            playStream(row[columns.streamUrl], row[columns.streamQuality]);
         }
     };
-
-   streamList->signal_row_activated().connect(activatedHandler);
+    streamList->signal_row_activated().connect(activatedHandler);
 }
 
 void mainWindow::readDataFile()
@@ -122,17 +119,21 @@ void mainWindow::readDataFile()
 
     for (string line; getline(stream, line);) { // I'd use a ustring here if getline was compatible with it
         if (!line.empty()) {
-            auto separator = line.find_first_of(";");
+            auto nameSeparator = line.find(";", 0);
+            auto urlSeparator = line.find(";", nameSeparator + 1);
 
-            if (separator == string::npos) {
+
+            if (nameSeparator == string::npos || urlSeparator == string::npos) {
                 continue;
             }
 
-            ustring stream = line.substr(0, separator);
-            ustring quality = line.substr(separator + 1, line.length() - separator);
+            ustring name = line.substr(0, nameSeparator);
+            ustring url = line.substr(nameSeparator + 1, urlSeparator - nameSeparator - 1);
+            ustring quality = line.substr(urlSeparator + 1, line.length() - urlSeparator);
 
             Gtk::TreeModel::Row row = *(listModel->append());
-            row[columns.streamUrl] = stream;
+            row[columns.streamName] = name;
+            row[columns.streamUrl] = url;
             row[columns.streamQuality] = quality;
         }
     }
@@ -145,6 +146,28 @@ void mainWindow::writeDataFile()
     ofstream stream(fileHelper::getConfigFilePath("streams.list") , ofstream::out | ofstream::trunc);
 
     for (const auto &row : listModel->children()) {
-        stream << row[columns.streamUrl] << ";" << row[columns.streamQuality] << endl;
+        stream << row[columns.streamName] << ";" << row[columns.streamUrl] << ";" << row[columns.streamQuality] << endl;
     }
+}
+
+void mainWindow::playStream(const Glib::ustring &url, const Glib::ustring &quality)
+{
+    livestreamerProcess* proc = new livestreamerProcess(url, quality);
+
+    proc->addOutputWatch([this, proc] (Glib::IOCondition condition) -> bool {
+        Glib::ustring str, output;
+        proc->output->read_line(str);
+        // remove livestreamer's newline.
+        //str.erase(std::remove(str.begin(), str.end(), '\n'), str.end()); -- doesn't work, "lvalue required as left operand of assignment in stl_algo.h"
+
+        for (size_t i=0; i < str.size(); i++) {
+            if (str[i] != '\n') {
+                output += str[i];
+            }
+        }
+
+        statusbar->push(output);
+
+        return true;
+    });
 }

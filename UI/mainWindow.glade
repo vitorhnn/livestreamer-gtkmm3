@@ -20,7 +20,6 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="hexpand">True</property>
-            <property name="toolbar_style">both</property>
             <property name="show_arrow">False</property>
             <child>
               <object class="GtkToolButton" id="addButton">
@@ -28,7 +27,22 @@
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Add stream</property>
                 <property name="label" translatable="yes">Add stream</property>
+                <property name="use_underline">True</property>
                 <property name="stock_id">gtk-add</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="editButton">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Edit stream</property>
+                <property name="label" translatable="yes">Edit stream</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-edit</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -80,7 +94,7 @@
                 <property name="tooltip_text" translatable="yes">Quit</property>
                 <property name="label" translatable="yes">Quit</property>
                 <property name="use_underline">True</property>
-                <property name="stock_id">gtk-close</property>
+                <property name="stock_id">gtk-quit</property>
               </object>
               <packing>
                 <property name="expand">False</property>

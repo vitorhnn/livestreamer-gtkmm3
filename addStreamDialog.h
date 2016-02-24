@@ -11,7 +11,9 @@
 
 class addStreamDialog : public Gtk::Dialog {
 public:
-    addStreamDialog(Gtk::Window& parent, const Glib::ustring &url = "twitch.tv/bobross", const Glib::ustring &quality = "best");
+    addStreamDialog(Gtk::Window& parent, const Glib::ustring &name = "Bob Ross", const Glib::ustring &url = "twitch.tv/bobross", const Glib::ustring &quality = "best");
+
+    Gtk::Entry      nameEntry;
     Gtk::Entry      UrlEntry;
     Gtk::Entry      qualityEntry;
 private:
