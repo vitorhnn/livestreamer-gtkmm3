@@ -1,0 +1,10 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=livestreamer-gtkmm3
+Comment=A GTKMM3 UI for livestreamer
+Exec=livestreamer-gtkmm3
+Icon=face-smile # yeah I need a better icon
+Terminal=false
+Categories=Network;
