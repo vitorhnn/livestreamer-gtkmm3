@@ -14,3 +14,4 @@ target_link_libraries(livestreamer-gtkmm3  ${GTKMM3_LIBRARIES} )
 
 install(TARGETS livestreamer-gtkmm3 DESTINATION bin)
 install(FILES ${PROJECT_SOURCE_DIR}/UI/mainWindow.glade DESTINATION share/${PROJECT_NAME}/UI)
+install(FILES ${PROJECT_SOURCE_DIR}/livestreamer-gtkmm3.desktop DESTINATION share/applications)
