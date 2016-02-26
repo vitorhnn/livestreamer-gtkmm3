@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 
         Glib::RefPtr<Builder> builder = Builder::create();
 
-        builder->add_from_file(fileHelper::getDataFilePath("./UI/mainWindow.glade"));
+        builder->add_from_file(fileHelper::getDataFilePath("UI/mainWindow.glade"));
 
         mainWindow* window = nullptr;
         builder->get_widget_derived("MainWindow", window);
