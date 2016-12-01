@@ -7,7 +7,7 @@ livestreamerProcess::livestreamerProcess(const Glib::ustring& streamUrl, const G
     using namespace Glib;
 
     std::vector<ustring> argv;
-    argv.push_back("livestreamer");
+    argv.push_back("streamlink");
     argv.push_back(streamUrl);
     argv.push_back(streamQuality);
 
@@ -33,6 +33,7 @@ livestreamerProcess::~livestreamerProcess()
     for (auto &connection : connections) {
         connection.disconnect();
     }
+
     Glib::spawn_close_pid(pid);
 }
 
